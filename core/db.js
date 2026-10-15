@@ -6,7 +6,8 @@ const NOME_DB = 'super-app';
 
 // Sempre que um módulo novo precisar de uma "tabela" (object store),
 // aumentamos a versão e criamos a store em onupgradeneeded.
-const VERSAO_DB = 1;
+// v1: dores | v2: alimentos e refeicoes
+const VERSAO_DB = 2;
 
 let conexao = null;
 
@@ -16,18 +17,33 @@ export function abrirDB() {
   return new Promise((resolve, reject) => {
     const pedido = indexedDB.open(NOME_DB, VERSAO_DB);
 
-    // Roda só na primeira vez ou quando a versão aumenta
+    // Roda na primeira vez ou quando a versão aumenta.
+    // Os "if" fazem com que só seja criado o que ainda não existe:
+    // quem já tinha a v1 ganha as stores novas sem perder os registros de dor.
     pedido.onupgradeneeded = () => {
       const db = pedido.result;
+
       if (!db.objectStoreNames.contains('dores')) {
-        // keyPath "data": a chave é o próprio dia (ex.: "2026-10-15").
-        // Assim cada dia tem no máximo um registro, como no diário de papel.
+        // Chave = o próprio dia: no máximo um registro por dia, como no papel
         db.createObjectStore('dores', { keyPath: 'data' });
+      }
+
+      if (!db.objectStoreNames.contains('alimentos')) {
+        db.createObjectStore('alimentos', { keyPath: 'id' });
+      }
+
+      if (!db.objectStoreNames.contains('refeicoes')) {
+        // Várias refeições por dia, então a chave é um id.
+        // O índice "data" permite buscar rápido as refeições de um dia.
+        const refeicoes = db.createObjectStore('refeicoes', { keyPath: 'id' });
+        refeicoes.createIndex('data', 'data');
       }
     };
 
     pedido.onsuccess = () => {
       conexao = pedido.result;
+      // Se uma versão mais nova do app abrir em outra aba, libera o banco para ela
+      conexao.onversionchange = () => { conexao.close(); conexao = null; };
       resolve(conexao);
     };
     pedido.onerror = () => reject(pedido.error);
@@ -59,4 +75,9 @@ export async function obter(nomeStore, chave) {
 
 export async function listar(nomeStore) {
   return comoPromise((await store(nomeStore)).getAll());
+}
+
+// Busca pelos registros cujo índice tem um valor (ex.: refeições do dia X)
+export async function listarPorIndice(nomeStore, indice, valor) {
+  return comoPromise((await store(nomeStore)).index(indice).getAll(valor));
 }

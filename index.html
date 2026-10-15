@@ -17,7 +17,7 @@
 <body>
   <main class="app">
 
-    <!-- Escolha do dia: hoje por padrão, mas dá para registrar um dia esquecido -->
+    <!-- Dia selecionado, compartilhado pelas duas telas -->
     <div class="barra-data">
       <span id="rotulo-data" class="rotulo-data"></span>
       <label class="campo-data">
@@ -26,49 +26,104 @@
       </label>
     </div>
 
-    <section class="registro" aria-labelledby="pergunta-dor">
-      <h1 id="pergunta-dor">Teve dor de cabeça?</h1>
+    <!-- ===== Tela de dor ===== -->
+    <div id="tela-dor" class="tela">
+      <section class="registro" aria-labelledby="pergunta-dor">
+        <h1 id="pergunta-dor">Teve dor de cabeça?</h1>
 
-      <div class="par-opcoes">
-        <button type="button" class="opcao" data-dor="nao" aria-pressed="false">Não</button>
-        <button type="button" class="opcao" data-dor="sim" aria-pressed="false">Sim</button>
-      </div>
+        <div class="par-opcoes">
+          <button type="button" class="opcao" data-dor="nao" aria-pressed="false">Não</button>
+          <button type="button" class="opcao" data-dor="sim" aria-pressed="false">Sim</button>
+        </div>
 
-      <!-- Só aparece quando a resposta é "Sim" -->
-      <div id="detalhes-dor" class="detalhes" hidden>
-        <fieldset>
-          <legend>Intensidade</legend>
-          <!-- Os botões de intensidade são criados pelo JavaScript a partir da legenda -->
-          <div id="opcoes-intensidade" class="lista-intensidade"></div>
-        </fieldset>
+        <!-- Só aparece quando a resposta é "Sim" -->
+        <div id="detalhes-dor" class="detalhes" hidden>
+          <fieldset>
+            <legend>Intensidade</legend>
+            <!-- Os botões de intensidade são criados pelo JavaScript a partir da legenda -->
+            <div id="opcoes-intensidade" class="lista-intensidade"></div>
+          </fieldset>
 
-        <fieldset>
-          <legend>Precisou tomar medicação para a dor?</legend>
-          <div class="par-opcoes">
-            <button type="button" class="opcao" data-medicacao="nao" aria-pressed="false">Não</button>
-            <button type="button" class="opcao" data-medicacao="sim" aria-pressed="false">Sim</button>
-          </div>
+          <fieldset>
+            <legend>Precisou tomar medicação para a dor?</legend>
+            <div class="par-opcoes">
+              <button type="button" class="opcao" data-medicacao="nao" aria-pressed="false">Não</button>
+              <button type="button" class="opcao" data-medicacao="sim" aria-pressed="false">Sim</button>
+            </div>
 
-          <div id="grupo-qual" class="grupo-qual" hidden>
-            <label for="campo-medicacao">Qual medicação?</label>
-            <input type="text" id="campo-medicacao" list="lista-medicacoes" autocomplete="off" placeholder="Ex.: dipirona 1 g">
-            <datalist id="lista-medicacoes"></datalist>
-          </div>
-        </fieldset>
+            <div id="grupo-qual" class="grupo-campo" hidden>
+              <label for="campo-medicacao">Qual medicação?</label>
+              <input type="text" id="campo-medicacao" list="lista-medicacoes" autocomplete="off" placeholder="Ex.: dipirona 1 g">
+              <datalist id="lista-medicacoes"></datalist>
+            </div>
+          </fieldset>
 
-        <button type="button" id="botao-salvar" class="botao-salvar">Salvar dia</button>
-      </div>
+          <button type="button" id="botao-salvar" class="botao-principal">Salvar dia</button>
+        </div>
 
-      <p id="status" class="status" role="status"></p>
-    </section>
+        <p id="status-dor" class="status" role="status"></p>
+      </section>
 
-    <section class="recentes" aria-labelledby="titulo-recentes">
-      <h2 id="titulo-recentes">Últimos registros</h2>
-      <p id="vazio-recentes" class="vazio">Os dias que você registrar aparecem aqui. Toque em um para alterar.</p>
-      <ul id="lista-recentes" class="lista-recentes"></ul>
-    </section>
+      <section class="secao" aria-labelledby="titulo-recentes">
+        <h2 id="titulo-recentes">Últimos registros</h2>
+        <p id="vazio-recentes" class="vazio">Os dias que você registrar aparecem aqui. Toque em um para alterar.</p>
+        <ul id="lista-recentes" class="lista-recentes"></ul>
+      </section>
+    </div>
+
+    <!-- ===== Tela de refeições ===== -->
+    <div id="tela-refeicoes" class="tela" hidden>
+      <h1>Refeições</h1>
+
+      <p id="vazio-refeicoes" class="vazio">Nenhuma refeição registrada neste dia.</p>
+      <ul id="lista-refeicoes" class="lista-refeicoes"></ul>
+
+      <button type="button" id="botao-nova-refeicao" class="botao-principal">Registrar refeição</button>
+
+      <section id="form-refeicao" class="registro" aria-labelledby="titulo-form-refeicao" hidden>
+        <h2 id="titulo-form-refeicao">Nova refeição</h2>
+
+        <div class="grupo-campo">
+          <label for="campo-hora">Horário</label>
+          <input type="time" id="campo-hora">
+        </div>
+
+        <div class="grupo-campo">
+          <span class="rotulo">Alimentos da refeição</span>
+          <p id="vazio-escolhidos" class="vazio">Escolha na lista ou digite abaixo.</p>
+          <div id="alimentos-escolhidos" class="chips"></div>
+        </div>
+
+        <div class="grupo-campo">
+          <label for="busca-alimento">Buscar ou adicionar alimento</label>
+          <input type="text" id="busca-alimento" autocomplete="off" placeholder="Ex.: café com leite">
+          <p id="dica-lista-vazia" class="vazio">Sua lista ainda está vazia. Digite um alimento para começar.</p>
+          <ul id="sugestoes-alimentos" class="sugestoes"></ul>
+        </div>
+
+        <button type="button" id="botao-salvar-refeicao" class="botao-principal">Salvar refeição</button>
+        <div class="acoes-secundarias">
+          <button type="button" id="botao-cancelar-refeicao" class="botao-pequeno">Cancelar</button>
+          <button type="button" id="botao-remover-refeicao" class="botao-pequeno botao-perigo" hidden>Remover refeição</button>
+        </div>
+      </section>
+
+      <p id="status-refeicoes" class="status" role="status"></p>
+
+      <details class="secao gerenciar">
+        <summary>Editar minha lista de alimentos</summary>
+        <p id="vazio-gerenciar" class="vazio">Os alimentos que você adicionar aparecem aqui.</p>
+        <ul id="lista-alimentos-edicao" class="lista-alimentos-edicao"></ul>
+      </details>
+    </div>
 
   </main>
+
+  <!-- Navegação entre as telas -->
+  <nav class="abas" aria-label="Telas">
+    <button type="button" class="aba" data-tela="dor" aria-current="page">Dor</button>
+    <button type="button" class="aba" data-tela="refeicoes">Refeições</button>
+  </nav>
 
   <script type="module" src="app.js"></script>
 </body>

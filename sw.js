@@ -3,7 +3,7 @@
 
 // IMPORTANTE: sempre que você alterar qualquer arquivo do app, aumente esta versão.
 // É assim que o celular percebe que há uma versão nova para baixar.
-const VERSAO = 'v1';
+const VERSAO = 'v2';
 const CACHE = `diario-${VERSAO}`;
 
 // Arquivos baixados na instalação, para o app inteiro funcionar offline.
@@ -16,8 +16,12 @@ const ARQUIVOS = [
   './css/style.css',
   './core/db.js',
   './core/datas.js',
+  './core/dia.js',
   './modulos/enxaqueca/dor.js',
   './modulos/enxaqueca/tela-registro.js',
+  './modulos/enxaqueca/alimentos.js',
+  './modulos/enxaqueca/refeicoes.js',
+  './modulos/enxaqueca/tela-refeicoes.js',
   './icones/icone-192.png',
   './icones/icone-512.png',
 ];

@@ -5,10 +5,11 @@
 // Os cliques só mudam o estado e chamam render().
 
 import { INTENSIDADES, salvarDia, obterDia, listarRecentes, medicacoesUsadas } from './dor.js';
-import { hojeISO, formatarData } from '../../core/datas.js';
+import { formatarData } from '../../core/datas.js';
+import { obterDia as diaSelecionado, mudarDia, aoMudarDia, rotuloDia } from '../../core/dia.js';
 
 const estado = {
-  data: hojeISO(),
+  data: diaSelecionado(),
   teveDor: null,         // null = ainda não respondeu
   intensidade: null,
   tomouMedicacao: null,
@@ -20,11 +21,8 @@ const $ = (seletor) => document.querySelector(seletor);
 export async function iniciarRegistro() {
   criarBotoesIntensidade();
 
-  const campoData = $('#campo-data');
-  campoData.max = hojeISO(); // não deixa registrar dias futuros
-  campoData.addEventListener('change', () => {
-    if (campoData.value) carregarDia(campoData.value);
-  });
+  // Quando o dia muda na barra do topo, carrega o registro daquele dia
+  aoMudarDia(carregarDia);
 
   document.querySelectorAll('[data-dor]').forEach((botao) =>
     botao.addEventListener('click', () => escolherDor(botao.dataset.dor === 'sim')));
@@ -112,7 +110,7 @@ async function salvar() {
 
   try {
     await salvarDia(estado);
-    mostrarStatus(`Salvo: ${rotuloData(estado.data)}.`);
+    mostrarStatus(`Salvo: ${rotuloDia(estado.data)}.`);
     await atualizarListas();
   } catch (erro) {
     console.error(erro);
@@ -121,9 +119,6 @@ async function salvar() {
 }
 
 function render() {
-  $('#campo-data').value = estado.data;
-  $('#rotulo-data').textContent = rotuloData(estado.data);
-
   marcar('[data-dor]', (b) => estado.teveDor !== null && (b.dataset.dor === 'sim') === estado.teveDor);
   $('#detalhes-dor').hidden = estado.teveDor !== true;
 
@@ -142,13 +137,8 @@ function marcar(seletor, estaEscolhido) {
     b.setAttribute('aria-pressed', String(estaEscolhido(b))));
 }
 
-function rotuloData(data) {
-  const texto = formatarData(data);
-  return data === hojeISO() ? `Hoje, ${texto}` : texto.charAt(0).toUpperCase() + texto.slice(1);
-}
-
 function mostrarStatus(texto, ehErro = false) {
-  const status = $('#status');
+  const status = $('#status-dor');
   status.textContent = texto;
   status.classList.toggle('erro', ehErro);
 }
@@ -181,7 +171,7 @@ function itemRecente(registro) {
 
   botao.append(data, resumo);
   botao.addEventListener('click', () => {
-    carregarDia(registro.data);
+    mudarDia(registro.data); // avisa a barra do topo e as outras telas
     window.scrollTo(0, 0);
   });
 
