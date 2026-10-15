@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#EDF0F4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#14171D" media="(prefers-color-scheme: dark)">
+  <title>Diário</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icones/icone-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icones/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="app">
+
+    <!-- Escolha do dia: hoje por padrão, mas dá para registrar um dia esquecido -->
+    <div class="barra-data">
+      <span id="rotulo-data" class="rotulo-data"></span>
+      <label class="campo-data">
+        <span class="visualmente-oculto">Escolher outro dia</span>
+        <input type="date" id="campo-data">
+      </label>
+    </div>
+
+    <section class="registro" aria-labelledby="pergunta-dor">
+      <h1 id="pergunta-dor">Teve dor de cabeça?</h1>
+
+      <div class="par-opcoes">
+        <button type="button" class="opcao" data-dor="nao" aria-pressed="false">Não</button>
+        <button type="button" class="opcao" data-dor="sim" aria-pressed="false">Sim</button>
+      </div>
+
+      <!-- Só aparece quando a resposta é "Sim" -->
+      <div id="detalhes-dor" class="detalhes" hidden>
+        <fieldset>
+          <legend>Intensidade</legend>
+          <!-- Os botões de intensidade são criados pelo JavaScript a partir da legenda -->
+          <div id="opcoes-intensidade" class="lista-intensidade"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Precisou tomar medicação para a dor?</legend>
+          <div class="par-opcoes">
+            <button type="button" class="opcao" data-medicacao="nao" aria-pressed="false">Não</button>
+            <button type="button" class="opcao" data-medicacao="sim" aria-pressed="false">Sim</button>
+          </div>
+
+          <div id="grupo-qual" class="grupo-qual" hidden>
+            <label for="campo-medicacao">Qual medicação?</label>
+            <input type="text" id="campo-medicacao" list="lista-medicacoes" autocomplete="off" placeholder="Ex.: dipirona 1 g">
+            <datalist id="lista-medicacoes"></datalist>
+          </div>
+        </fieldset>
+
+        <button type="button" id="botao-salvar" class="botao-salvar">Salvar dia</button>
+      </div>
+
+      <p id="status" class="status" role="status"></p>
+    </section>
+
+    <section class="recentes" aria-labelledby="titulo-recentes">
+      <h2 id="titulo-recentes">Últimos registros</h2>
+      <p id="vazio-recentes" class="vazio">Os dias que você registrar aparecem aqui. Toque em um para alterar.</p>
+      <ul id="lista-recentes" class="lista-recentes"></ul>
+    </section>
+
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

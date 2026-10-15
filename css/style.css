@@ -1,0 +1,177 @@
+/* Cores em variáveis: um lugar só para mudar o visual inteiro.
+   As três cores de intensidade se repetirão no calendário e no painel do médico. */
+:root {
+  --fundo: #EDF0F4;
+  --superficie: #FFFFFF;
+  --tinta: #1C2230;
+  --tinta-suave: #586174;
+  --borda: #D3D9E2;
+  --primaria: #2F6F73;
+  --primaria-tinta: #FFFFFF;
+  --sem-dor: #3B8457;
+  --leve: #CF9A12;
+  --moderada: #DC6E2F;
+  --grave: #C0394A;
+  --erro: #B3261E;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #14171D;
+    --superficie: #1D2129;
+    --tinta: #E7EAF0;
+    --tinta-suave: #A0A8B8;
+    --borda: #343A48;
+    --primaria: #5BA8AC;
+    --primaria-tinta: #0F1A1B;
+    --sem-dor: #62B27F;
+    --leve: #E9BD45;
+    --moderada: #EE8A4E;
+    --grave: #E5677A;
+    --erro: #F2948C;
+    color-scheme: dark;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Garante que "hidden" sempre esconda, mesmo em elementos com display definido */
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--tinta);
+  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem max(2.5rem, env(safe-area-inset-bottom));
+}
+
+h1 { font-size: 1.75rem; line-height: 1.2; margin: 0 0 1rem; }
+h2 { font-size: 1.125rem; margin: 0 0 .75rem; }
+
+button, input { font: inherit; color: inherit; }
+
+:focus-visible { outline: 3px solid var(--primaria); outline-offset: 2px; }
+
+.visualmente-oculto {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* Barra do dia */
+.barra-data {
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  margin-bottom: 1.5rem;
+}
+.rotulo-data { font-weight: 700; color: var(--tinta-suave); }
+.campo-data input {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: .5rem;
+  padding: .4rem .6rem;
+}
+
+/* Bloco de registro */
+.registro {
+  background: var(--superficie);
+  border-radius: 1.25rem;
+  padding: 1.5rem 1.25rem;
+}
+
+.par-opcoes { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+
+.opcao {
+  min-height: 3.75rem;
+  border: 2px solid var(--borda);
+  border-radius: .875rem;
+  background: transparent;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.opcao[aria-pressed="true"] {
+  border-color: var(--primaria);
+  background: color-mix(in srgb, var(--primaria) 14%, transparent);
+}
+
+fieldset { border: 0; padding: 0; margin: 1.75rem 0 0; }
+legend { font-weight: 700; padding: 0; margin-bottom: .75rem; }
+
+/* Intensidade: cada botão leva a cor do seu nível numa faixa lateral */
+.lista-intensidade { display: grid; gap: .625rem; }
+
+.intensidade {
+  display: grid; gap: .125rem;
+  text-align: left;
+  padding: .875rem 1rem .875rem 1.125rem;
+  border: 2px solid var(--borda);
+  border-left: .5rem solid var(--cor);
+  border-radius: .875rem;
+  background: transparent;
+  cursor: pointer;
+}
+.intensidade-nome { font-weight: 700; font-size: 1.125rem; }
+.intensidade-descricao { color: var(--tinta-suave); font-size: .9375rem; line-height: 1.35; }
+.intensidade[aria-pressed="true"] {
+  border-color: var(--cor);
+  background: color-mix(in srgb, var(--cor) 16%, transparent);
+}
+
+.grupo-qual { display: grid; gap: .375rem; margin-top: 1rem; }
+.grupo-qual input {
+  min-height: 3rem;
+  padding: .5rem .75rem;
+  border: 2px solid var(--borda);
+  border-radius: .75rem;
+  background: transparent;
+}
+
+.botao-salvar {
+  width: 100%;
+  min-height: 3.5rem;
+  margin-top: 1.75rem;
+  border: 0;
+  border-radius: .875rem;
+  background: var(--primaria);
+  color: var(--primaria-tinta);
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.status { min-height: 1.5em; margin: 1rem 0 0; font-weight: 700; color: var(--sem-dor); }
+.status.erro { color: var(--erro); }
+
+/* Últimos registros */
+.recentes { margin-top: 2rem; }
+.vazio { color: var(--tinta-suave); margin: 0; }
+.lista-recentes { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+
+.recente {
+  width: 100%;
+  display: flex; align-items: center; gap: .75rem;
+  text-align: left;
+  padding: .75rem 1rem;
+  border: 0;
+  border-radius: .75rem;
+  background: var(--superficie);
+  cursor: pointer;
+}
+.recente::before {
+  content: "";
+  flex: none;
+  width: .875rem; height: .875rem;
+  border-radius: 50%;
+  background: var(--cor);
+}
+.recente-data { font-weight: 700; min-width: 6.5rem; }
+.recente-resumo { color: var(--tinta-suave); }
